@@ -1,4 +1,4 @@
-import { BkName, Report, ReportItem, Status } from './cupis.repository';
+import { Report, ReportItem, Status } from './cupis.repository';
 import prettyNum from 'pretty-num';
 
 class CheckerMapper {
@@ -16,20 +16,6 @@ class CheckerMapper {
     }
   }
 
-  mapBkName(bkName: BkName): string {
-    switch (bkName) {
-      case BkName.betboom: {
-        return 'БК «BetBoom»';
-      }
-      case BkName.pari: {
-        return 'БК «Pari»';
-      }
-      case BkName.winline: {
-        return 'БК «Winline»';
-      }
-    }
-  }
-
   makeWinLossPivot(items: ReportItem[]): string {
     let reportMessage = '';
 
@@ -38,11 +24,11 @@ class CheckerMapper {
     for (const item of items) {
       if (item.total < 0) {
         losses.push(
-          `├ ${this.mapBkName(item.bkName)}: ${prettyNum(item.total, { thousandsSeparator: ' ' })}`,
+          `├ ${item.bkName}: ${prettyNum(item.total, { thousandsSeparator: ' ' })}`,
         );
       } else {
         wins.push(
-          `├ ${this.mapBkName(item.bkName)}: ${prettyNum(item.total, { thousandsSeparator: ' ' })}`,
+          `├ ${item.bkName}: ${prettyNum(item.total, { thousandsSeparator: ' ' })}`,
         );
       }
     }

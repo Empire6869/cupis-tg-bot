@@ -22,4 +22,4 @@ export const helpKeyboard = Markup.inlineKeyboard(
   },
 );
 export const checkMessage =
-  'Введите логин и пароль. логин:пароль (+79219552327:qwerty123)';
+  'Введите логин и пароль. номер телефона:пароль (+79219552327:qwerty123)';

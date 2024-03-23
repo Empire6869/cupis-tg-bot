@@ -1,15 +1,11 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 export enum Status {
   full = 'full',
   basic = 'basic',
   unverified = 'unverified',
-}
-
-export enum BkName {
-  pari = 'pari',
-  winline = 'winline',
-  betboom = 'betboom',
 }
 
 export interface Report {
@@ -20,47 +16,20 @@ export interface Report {
 }
 
 export interface ReportItem {
-  bkName: BkName;
+  bkName: string;
   total: number;
 }
 
 @Injectable()
 export class CupisRepository {
+  constructor(private readonly httpService: HttpService, private configService: ConfigService) {}
+  
   async getReport(username: string, password: string): Promise<Report> {
-    username;
-    password;
+    const response = await this.httpService.axiosRef.post<Report>(`http://${this.configService.get('CUPIS_COUNTER_HOST')}:${this.configService.get('CUPIS_COUNTER_PORT')}/calculate-report`, {
+      username,
+      password
+    });
 
-    return {
-      recordsCount: 2000,
-      accountStatus: Status.full,
-      itemsAllTime: [
-        {
-          bkName: BkName.betboom,
-          total: 100_000,
-        },
-        {
-          bkName: BkName.pari,
-          total: -300_000,
-        },
-        {
-          bkName: BkName.winline,
-          total: 823_234,
-        },
-      ],
-      itemsLastThreeMonths: [
-        {
-          bkName: BkName.betboom,
-          total: 10_000,
-        },
-        {
-          bkName: BkName.pari,
-          total: -100_000,
-        },
-        {
-          bkName: BkName.winline,
-          total: 223_234,
-        },
-      ],
-    };
+    return response.data
   }
 }

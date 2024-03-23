@@ -5,9 +5,11 @@ import { session } from 'telegraf';
 import { CheckerScene } from './checker-scene.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CupisRepository } from './cupis.repository';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot(),
     TelegrafModule.forRootAsync({
       botName: 'checker',
