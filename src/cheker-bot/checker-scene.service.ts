@@ -11,7 +11,8 @@ import { Scenes } from 'telegraf';
 import { Injectable } from '@nestjs/common';
 import { CupisRepository } from './cupis.repository';
 import { checkerMapper } from './checker.mapper';
-import { phone } from 'phone'
+import parsePhoneNumber from 'libphonenumber-js'
+import { AxiosError } from 'axios';
 
 @Scene(CHECK_SCENE_NAME)
 @Injectable()
@@ -38,19 +39,37 @@ export class CheckerScene {
     const login = loginPassSplit[0];
     const password = loginPassSplit[1];
 
-    const phoneNumber = phone(login);
+    const phoneNumber = parsePhoneNumber(login, 'RU');
 
-    if (!phoneNumber.isValid) {
+    if (!phoneNumber || !phoneNumber.isValid()) {
       await ctx.reply('Не правильно введен номер телефона. Введите логин и пароль в формате: номер телефона:пароль')
       return
     }
 
     console.log('phone', phoneNumber)
     try {
-      const report = await this.cupicRepository.getReport(phoneNumber.phoneNumber.replace('+7', ''), password);
+      const report = await this.cupicRepository.getReport(phoneNumber.nationalNumber, password);
 
       await ctx.reply(checkerMapper.getReportMessage(report));
     } catch(err) {
+      
+      if (err instanceof AxiosError) {
+        if (err.response.status === 401) {
+          await ctx.reply('Неправильно указан номер телефона или пароль. Укажите правильные данные');
+          return
+        }
+
+        if (err.response.status === 402) {
+          await ctx.reply('Неправильно указан пароль. Пароль должен быть длиннее 8 символов. Укажите правильные данные');
+          return
+        }
+        
+        if (err.response.status === 403) {
+          await ctx.reply('Ошибка авторизации в цупис, попробуйте еще раз');
+          await ctx.scene.leave();
+          return
+        }
+      }
       console.log('Unable to get report', err);
       await ctx.reply('Неполучилось получить отчет. Попробуйте позже');
       await ctx.scene.leave();
