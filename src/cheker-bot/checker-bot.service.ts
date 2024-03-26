@@ -1,11 +1,9 @@
-import { Update, Ctx, Start, Action } from 'nestjs-telegraf';
+import { Update, Ctx, Start, Hears } from 'nestjs-telegraf';
 import { Context, Scenes } from 'telegraf';
 import {
-  CHECK_CB,
   CHECK_SCENE_NAME,
-  HELP_CB,
-  MENU_CB,
-  helpKeyboard,
+  checkerKeyboardMessage,
+  helpKeyboardMessage,
   helpMessage,
   menuKeyboard,
   menuMessage,
@@ -18,17 +16,12 @@ export class CheckerBotService {
     await ctx.reply(menuMessage, menuKeyboard);
   }
 
-  @Action(HELP_CB)
+  @Hears(helpKeyboardMessage)
   async help(@Ctx() ctx: Context) {
-    await ctx.editMessageText(helpMessage, helpKeyboard);
+    await ctx.sendMessage(helpMessage);
   }
 
-  @Action(MENU_CB)
-  async menu(@Ctx() ctx: Context) {
-    await ctx.editMessageText(menuMessage, menuKeyboard);
-  }
-
-  @Action(CHECK_CB)
+  @Hears(checkerKeyboardMessage)
   async check(@Ctx() ctx: Scenes.SceneContext) {
     await ctx.scene.enter(CHECK_SCENE_NAME);
   }

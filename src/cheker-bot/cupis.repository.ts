@@ -18,6 +18,8 @@ export interface Report {
 export interface ReportItem {
   bkName: string;
   total: number;
+  deposits: number;
+  withdraws: number;
 }
 
 @Injectable()

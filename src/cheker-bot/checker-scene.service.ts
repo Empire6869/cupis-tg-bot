@@ -6,13 +6,15 @@ import {
   SceneEnter,
   SceneLeave,
 } from 'nestjs-telegraf';
-import { CHECK_SCENE_NAME, checkMessage } from './constants';
+import { CHECK_SCENE_NAME, checkMessage, menuKeyboard } from './constants';
 import { Scenes } from 'telegraf';
 import { Injectable } from '@nestjs/common';
 import { CupisRepository } from './cupis.repository';
 import { checkerMapper } from './checker.mapper';
 import parsePhoneNumber from 'libphonenumber-js'
 import { AxiosError } from 'axios';
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 @Scene(CHECK_SCENE_NAME)
 @Injectable()
@@ -21,7 +23,7 @@ export class CheckerScene {
 
   @SceneEnter()
   async sceneEnter(@Ctx() ctx: Scenes.SceneContext) {
-    await ctx.editMessageText(checkMessage);
+    await ctx.sendMessage(checkMessage);
   }
 
   @On('text')
@@ -32,7 +34,7 @@ export class CheckerScene {
     const loginPassSplit = message.split(':');
 
     if (loginPassSplit.length !== 2) {
-      await ctx.reply('Введите логин и пароль в формате: номер телефона:пароль');
+      await ctx.reply('Неправильно введены данные.\n\n‼️ Важно:\n\n  1. Формат ввода: номер телефона:пароль.\n        Пример: +79219552327:qwerty123\n  2. Номер телефона начинается с +7 или 8\n  3. Пароль не короче 8 символов');
       return;
     }
 
@@ -42,12 +44,14 @@ export class CheckerScene {
     const phoneNumber = parsePhoneNumber(login, 'RU');
 
     if (!phoneNumber || !phoneNumber.isValid()) {
-      await ctx.reply('Не правильно введен номер телефона. Введите логин и пароль в формате: номер телефона:пароль')
+      await ctx.reply('Не правильно введен номер телефона. \n\n‼️ Важно:\n\n  1. Формат ввода: номер телефона:пароль.\n        Пример: +79219552327:qwerty123\n  2. Номер телефона начинается с +7 или 8\n  3. Пароль не короче 8 символов')
       return
     }
 
     console.log('phone', phoneNumber)
     try {
+      await ctx.reply('♾️ Идёт обработка...');
+
       const report = await this.cupicRepository.getReport(phoneNumber.nationalNumber, password);
 
       await ctx.reply(checkerMapper.getReportMessage(report));
@@ -81,6 +85,6 @@ export class CheckerScene {
 
   @SceneLeave()
   async sceneLeave(@Ctx() ctx: Scenes.SceneContext) {
-    await ctx.reply('Спасибо за использование бота!');
+    await ctx.reply('✅ Спасибо за использование бота!', menuKeyboard);
   }
 }

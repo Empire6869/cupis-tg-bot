@@ -17,6 +17,7 @@ import { HttpModule } from '@nestjs/axios';
         return {
           middlewares: [session()],
           token: config.get('TELEGRAM_BOT_TOKEN'),
+          handlerTimeout: 700_000
         };
       },
       imports: [ConfigModule],
