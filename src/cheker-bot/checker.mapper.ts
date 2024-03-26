@@ -21,7 +21,7 @@ class CheckerMapper {
       return 'Не найдено операций';
     }
 
-    let reportMessage = `Выполнено с помощью телеграм-бота @CupisCountBot\n${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}\n`;
+    let reportMessage = `Выполнено с помощью телеграм-бота @CupisCountBot\n${new Date().toLocaleString("ru-RU", {timeZone: "Europe/Moscow"})}\n`;
 
     for (const item of report.itemsAllTime) {
       if (item.bkName === 'Кошелек ЦУПИС') {
@@ -42,6 +42,7 @@ class CheckerMapper {
         reportMessage += `    ${lastThreeMonths.total < 0 ? `Проигрыш: ${prettyNum(Math.abs(lastThreeMonths.total), { thousandsSeparator: ' ' })}\n` : `Выигрыш: ${prettyNum(Math.abs(lastThreeMonths.total), { thousandsSeparator: ' ' })}\n`}`
       }
     }
+    reportMessage += '\n✅ Продажа аккаунтов БК с минусом: @bk_skup'
 
     return reportMessage;
   }

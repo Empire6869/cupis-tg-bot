@@ -16,7 +16,7 @@ export const menuKeyboard = Markup.keyboard(
     columns: 2,
   },
 ).resize();
-export const helpMessage = '⚠️ При возникновении проблем с ботом обращайтесь к @unknown';
+export const helpMessage = '⚠️ При возникновении проблем с ботом обращайтесь к @bk_skup\n\n✅ Продажа аккаунтов БК с минусом: @bk_skup';
 export const helpKeyboard = Markup.inlineKeyboard(
   [Markup.button.callback('Вернуться в меню', MENU_CB)],
   {
