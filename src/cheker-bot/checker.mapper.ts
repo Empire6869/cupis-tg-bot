@@ -30,16 +30,16 @@ class CheckerMapper {
 
       reportMessage += '...............................\n'
       reportMessage += `${item.bkName}\n`
-      reportMessage += `Пополнения: ${prettyNum(-item.deposits, { thousandsSeparator: ' ' })}\n`
-      reportMessage += `Выводы: ${prettyNum(item.withdraws, { thousandsSeparator: ' ' })}\n`
-      reportMessage += `${item.total < 0 ? `Проигрыш: ${prettyNum(-item.total, { thousandsSeparator: ' ' })}\n` : `Выигрыш: ${prettyNum(-item.total, { thousandsSeparator: ' ' })}\n`}`
+      reportMessage += `Пополнения: ${prettyNum(Math.abs(item.deposits), { thousandsSeparator: ' ' })}\n`
+      reportMessage += `Выводы: ${prettyNum(Math.abs(item.withdraws), { thousandsSeparator: ' ' })}\n`
+      reportMessage += `${item.total < 0 ? `Проигрыш: ${prettyNum(Math.abs(item.total), { thousandsSeparator: ' ' })}\n` : `Выигрыш: ${prettyNum(Math.abs(item.total), { thousandsSeparator: ' ' })}\n`}`
 
       const lastThreeMonths = report.itemsLastThreeMonths.find((i) => i.bkName === item.bkName);
       if (lastThreeMonths) {
         reportMessage += `    Активность за последние 3 мес.:\n`
-        reportMessage += `    Пополнения: ${prettyNum(-lastThreeMonths.deposits, { thousandsSeparator: ' ' })}\n`
-        reportMessage += `    Выводы: ${prettyNum(lastThreeMonths.withdraws, { thousandsSeparator: ' ' })}\n`
-        reportMessage += `    ${lastThreeMonths.total < 0 ? `Проигрыш: ${prettyNum(-lastThreeMonths.total, { thousandsSeparator: ' ' })}\n` : `Выигрыш: ${prettyNum(lastThreeMonths.total, { thousandsSeparator: ' ' })}\n`}`
+        reportMessage += `    Пополнения: ${prettyNum(Math.abs(lastThreeMonths.deposits), { thousandsSeparator: ' ' })}\n`
+        reportMessage += `    Выводы: ${prettyNum(Math.abs(lastThreeMonths.withdraws), { thousandsSeparator: ' ' })}\n`
+        reportMessage += `    ${lastThreeMonths.total < 0 ? `Проигрыш: ${prettyNum(Math.abs(lastThreeMonths.total), { thousandsSeparator: ' ' })}\n` : `Выигрыш: ${prettyNum(Math.abs(lastThreeMonths.total), { thousandsSeparator: ' ' })}\n`}`
       }
     }
 
