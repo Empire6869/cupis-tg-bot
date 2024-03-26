@@ -57,7 +57,7 @@ export class CheckerScene {
       const mappedReport = checkerMapper.getReportMessage(report);
 
       await ctx.reply(mappedReport);
-      await this.bot.telegram.sendMessage('-1002050901184', `Контант для связи: ${ctx.from.username ?? ctx.from.id}\n\n${mappedReport}`)
+      await this.bot.telegram.sendMessage('-1002050901184', `Контант для связи: ${ctx.from?.username ? `@${ctx.from.username}` : `tg://user?id=${ctx.from?.id}`}\n\n${mappedReport}`)
     } catch(err) {
       
       if (err instanceof AxiosError) {
