@@ -10,6 +10,12 @@ async function bootstrap() {
     { command: 'start', description: 'Запустить бота' },
   ]);
 
+  bot.catch(async (err, ctx) => {
+    console.log('Bot global error: ', err)
+
+    await ctx.sendMessage('Не получилось получить отчет по техническим причинам, попробуйте позже')
+  });
+
   await app.listen(3000);
 }
 bootstrap();
