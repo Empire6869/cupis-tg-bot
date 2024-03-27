@@ -76,6 +76,12 @@ export class CheckerScene {
           await ctx.scene.leave();
           return
         }
+
+        if (err.response.status === 405) {
+          await ctx.reply('Ошибка авторизации в цупис, замечена подозрительная активность, попробуйте еще раз');
+          await ctx.scene.leave();
+          return
+        }
       }
       console.log('Unable to get report', err);
       await ctx.reply('Неполучилось получить отчет. Попробуйте позже');
